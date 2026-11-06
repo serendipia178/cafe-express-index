@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://api.github.com https://codeberg.org https://*.codeberg.page; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0a2463">
+<title>CAFÉ EXPRESS · Publicador</title>
+<style>
+:root{--n1:#0a2463;--n2:#1457d9;--mint:#3ee6a8;--bg:#eef3fb;--card:#fff;--tx:#14213d;--mu:#62718f;--ln:#dbe4f2;--er:#e5484d;--ok:#12a06a;--soft:#eef3fb;--he:#1457d9;--on:#fff;--onm:#042a1d;--page:#d5deee;--ts:#a9bbe6;--hl:#b9c9ee;--ct:#c3d2f3;--mt:rgba(62,230,168,.18);--mb:rgba(62,230,168,.5);--secb:#f1f9f5;--sect:#245a42;--sl:#14653f;--ov:rgba(6,16,45,.62)}
+[data-theme=dark]{--n1:#000;--n2:#ff8a00;--mint:#ffb300;--bg:#000;--card:#0b0b0b;--tx:#fff;--mu:#b9b9b9;--ln:#3a2c08;--er:#ff6b6b;--ok:#ffb300;--soft:#161006;--he:#1f1300;--on:#000;--onm:#000;--page:#000;--ts:#d9b25a;--hl:#e0bb6a;--ct:#e6c56f;--mt:rgba(255,179,0,.16);--mb:rgba(255,179,0,.55);--secb:#17110a;--sect:#ffcf66;--sl:#ffb300;--ov:rgba(0,0,0,.82)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:17px}
+body{margin:0;background:var(--page);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+.app{max-width:560px;margin:0 auto;min-height:100vh;background:var(--bg);padding-bottom:92px;position:relative}
+.top{background:var(--n1);color:#fff;display:flex;align-items:center;gap:10px;padding:14px 18px}
+.top svg{width:34px;height:34px;flex:none}
+.top b{display:block;font-size:1.15rem;letter-spacing:.03em}
+.top small{display:block;color:var(--ts);font-size:.72rem;letter-spacing:.08em}
+.hero{background:linear-gradient(165deg,var(--n1) 0,var(--he) 100%);padding:6px 18px 30px;text-align:center;border-radius:0 0 30px 30px}
+.ring{position:relative;width:224px;height:224px;margin:8px auto 4px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .tr{fill:none;stroke:rgba(255,255,255,.16);stroke-width:14}
+.ring .pg{fill:none;stroke:var(--mint);stroke-width:14;stroke-linecap:round;stroke-dasharray:553;stroke-dashoffset:553;transition:stroke-dashoffset .5s ease,stroke .3s}
+.ring.err .pg{stroke:#ff8a8f}
+.ring.spin:before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px dashed rgba(255,255,255,.35);animation:sp 9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+#pc{font:700 3.1rem Georgia,"Times New Roman",serif;line-height:1}
+#pl{font-size:.82rem;color:var(--hl);margin-top:4px}
+#sx{color:#e6eeff;min-height:2.6em;font-size:.95rem;margin:6px 6px 10px}
+#sx.e{color:#ffc2c5;font-weight:600}
+.chips{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.chip{font-size:.8rem;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,.12);color:var(--ct);border:1px solid rgba(255,255,255,.2)}
+.chip.ok{background:var(--mt);color:var(--mint);border-color:var(--mb)}
+.chip.ok:before{content:"✓ "}
+#main{display:block;width:100%;max-width:340px;margin:0 auto;padding:17px;border:0;border-radius:40px;background:var(--mint);color:var(--onm);font-weight:800;font-size:1.15rem;font-family:inherit;letter-spacing:.05em;box-shadow:0 10px 24px rgba(0,0,0,.28);cursor:pointer}
+#main:active{transform:translateY(2px)}
+#main[disabled]{background:#7e93c4;color:#e2e9f8;box-shadow:none;cursor:default}
+#again{display:none;margin:12px auto 0;background:none;border:0;color:#cddaf7;text-decoration:underline;font:inherit;font-size:.9rem}
+.body{padding:16px 14px 0}
+.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(20,40,90,.07)}
+.card h2{margin:0 0 10px;font-size:1.02rem;font-weight:700}
+.seg{display:flex;background:var(--soft);border-radius:12px;padding:4px;gap:4px}
+.seg button{flex:1;padding:11px;border:0;border-radius:9px;background:transparent;color:var(--mu);font-weight:700;font-size:.98rem;font-family:inherit}
+.seg button.on{background:var(--n2);color:var(--on)}
+label{display:block;font-weight:600;font-size:.9rem;margin:12px 0 5px}
+.in{display:flex;gap:8px}
+input[type=text],input[type=password]{width:100%;padding:13px;border:1.5px solid var(--ln);border-radius:11px;background:var(--card);color:var(--tx);font:inherit}
+input:focus,button:focus-visible,summary:focus-visible,a:focus-visible,.nav button:focus-visible{outline:3px solid #86adff;outline-offset:2px}
+.sm{padding:0 14px;border:1.5px solid var(--ln);border-radius:11px;background:var(--card);color:var(--n2);font-weight:700;font-size:.88rem;font-family:inherit;white-space:nowrap}
+.b2{display:block;width:100%;padding:14px;border:1.5px solid var(--n2);border-radius:12px;background:var(--card);color:var(--n2);font-weight:700;font-size:1rem;font-family:inherit;text-align:center;text-decoration:none}
+.b1{display:block;width:100%;padding:14px;border:0;border-radius:12px;background:var(--n2);color:var(--on);font-weight:700;font-size:1rem;font-family:inherit;text-align:center;text-decoration:none}
+.two{display:flex;gap:8px;margin-top:8px}.two>*{flex:1}
+.hint{color:var(--mu);font-size:.84rem;margin:6px 0 0}
+#fn{color:var(--ok);font-weight:600;word-break:break-all;margin-top:8px;min-height:1.3em}
+.st{list-style:none;margin:0;padding:0}
+.st li{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--ln);color:var(--mu);font-size:.95rem}
+.st li:first-child{border-top:0}
+.st li i{width:22px;height:22px;border-radius:50%;border:2px solid var(--ln);flex:none;display:grid;place-items:center;font-style:normal;font-size:.8rem;color:var(--on)}
+.st li.run{color:var(--tx);font-weight:600}.st li.run i{border-color:var(--n2);border-top-color:transparent;animation:sp 1s linear infinite}
+.st li.done{color:var(--tx)}.st li.done i{background:var(--ok);border-color:var(--ok)}.st li.done i:after{content:"✓"}
+.pg2{display:none}.pg2.on{display:block}
+.pt{padding:16px 14px 0}
+.pt h1{margin:4px 4px 12px;font-size:1.3rem}
+details{border-top:1px solid var(--ln)}
+details:first-of-type{border-top:0}
+summary{padding:13px 0;font-weight:700;cursor:pointer}
+details ul,details ol{padding-left:20px;margin:0 0 12px;color:var(--mu);font-size:.92rem}
+details li{margin-bottom:6px}
+code{background:var(--soft);padding:1px 6px;border-radius:5px;color:var(--tx);word-break:break-all;font-size:.88em}
+.ab{text-align:center}
+.ab svg{width:72px;height:72px;background:var(--n1);border-radius:20px;padding:12px}
+.ab h2{margin:10px 0 2px;font-size:1.3rem}
+.ab p{margin:4px 0;color:var(--mu);font-size:.92rem}
+.ft{text-align:center;color:var(--mu);font-size:.75rem;padding:8px 18px 4px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:560px;background:var(--card);border-top:1px solid var(--ln);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+.nav button{flex:1;background:none;border:0;color:var(--mu);font-weight:600;font-size:.76rem;font-family:inherit;padding:6px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav button.on{color:var(--n2)}
+.nav svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#ov{display:none;position:fixed;inset:0;background:var(--ov);z-index:10;align-items:flex-end;justify-content:center}
+#ov.on{display:flex}
+.sh{background:var(--card);width:100%;max-width:560px;border-radius:26px 26px 0 0;padding:20px 18px 24px;max-height:92vh;overflow:auto}
+.sh h2{margin:0 0 2px;font-size:1.25rem;color:var(--ok)}
+#url{display:block;background:var(--soft);border:1.5px dashed var(--n2);border-radius:12px;padding:13px;margin:12px 0;font-weight:700;word-break:break-all;color:var(--n2);text-align:center}
+#msg{color:var(--mu);font-size:.86rem;margin:8px 0}
+textarea{width:100%;min-height:72px;padding:11px;border:1.5px solid var(--ln);border-radius:11px;font:inherit;font-size:.92rem;color:var(--tx);background:var(--card)}
+.sec{background:var(--secb);border-radius:12px;padding:11px 13px;margin-top:14px;font-size:.86rem;color:var(--sect)}
+.x{float:right;background:var(--bg);border:0;border-radius:50%;width:36px;height:36px;font-size:1.1rem;color:var(--mu)}
+@media (prefers-reduced-motion:reduce){.ring.spin:before,.st li.run i{animation:none}.ring .pg{transition:none}}
+[data-theme=dark] .top{border-bottom:1px solid var(--ln)}
+[data-theme=dark] #main[disabled]{background:#4a3a10;color:#a89050}
+[data-theme=dark] .ab svg{border:1px solid var(--ln)}
+.tg{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:50%;width:40px;height:40px;display:grid;place-items:center;color:#fff;padding:0;cursor:pointer}
+.tg svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tg .su{display:none}
+[data-theme=dark] .tg .su{display:block}
+[data-theme=dark] .tg .mo{display:none}
+[data-theme=dark] .tg{color:var(--mint);border-color:var(--ln)}
+#det{min-height:1.2em}
+#rep{display:none;margin:10px auto 0;background:none;border:0;color:#ffd6d8;text-decoration:underline;font-family:inherit;font-size:.92rem}
+#ov2{display:none;position:fixed;inset:0;background:var(--ov);z-index:10;align-items:flex-end;justify-content:center}
+#ov2.on{display:flex}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="top">
+<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 12h17v7a6 6 0 0 1-6 6h-5a6 6 0 0 1-6-6z" fill="#fff"></path><path d="M23 14h2a3 3 0 0 1 0 6h-2" stroke="#fff" stroke-width="2" fill="none"></path><path d="M11 8c0-2 2-2 2-4M16 8c0-2 2-2 2-4" stroke="#3ee6a8" stroke-width="2" stroke-linecap="round" fill="none"></path></svg>
+<div><b>CAFÉ EXPRESS</b><small>Publicador</small></div>
+<button class="tg" id="th" type="button" aria-label="Cambiar entre modo claro y modo oscuro"><svg class="mo" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg><svg class="su" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></button>
+</div>
+
+<section class="pg2" id="p1">
+<div class="hero">
+<div class="ring" id="ring">
+<svg viewBox="0 0 200 200"><circle class="tr" cx="100" cy="100" r="88"></circle><circle class="pg" id="rg" cx="100" cy="100" r="88"></circle></svg>
+<div class="rc"><div id="pc">0%</div><div id="pl">Publicación</div></div>
+</div>
+<div id="sx">Completa los tres datos y pulsa Publicar.</div>
+<div class="chips"><span class="chip" id="c1">Token</span><span class="chip" id="c2">Archivo</span><span class="chip" id="c3">Nombre</span></div>
+<button id="main">PUBLICAR</button>
+<button id="again">Publicar otra aplicación</button>
+<button id="rep">Reportar incidencia</button>
+</div>
+
+<div class="body">
+<div class="card">
+<h2>Tu cuenta</h2>
+<div class="seg" id="seg"><button class="on" data-p="auto">Automático</button><button data-p="gh">GitHub</button><button data-p="cb">Codeberg</button></div>
+<label for="tok">Token de acceso</label>
+<div class="in"><input id="tok" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Pégalo aquí"><button class="sm" id="eye" type="button">Ver</button></div>
+<p class="hint" id="det">Automático: detecto GitHub o Codeberg según tu token.</p>
+<a class="b2" id="gtk" target="_blank" rel="noopener noreferrer" style="margin-top:10px" href="https://github.com/settings/tokens/new?scopes=repo&amp;description=coffeb&amp;default_expires_at=7">Editar y obtener token</a>
+<p class="hint">Abre la página de tu cuenta con el permiso ya preparado. Copia el token y vuelve aquí. <a id="ltk" target="_blank" rel="noopener noreferrer" style="color:var(--n2);font-weight:700" href="https://github.com/settings/tokens">Ver o borrar mis tokens</a><span id="alt" style="display: inline;"> · <a id="ctk" target="_blank" rel="noopener noreferrer" style="color:var(--n2);font-weight:700" href="https://codeberg.org/user/settings/applications">Token de Codeberg</a></span></p>
+<p class="hint">El token solo vive en esta pantalla: no se guarda y se borra al terminar. COFFEB-C solo actúa sobre la cuenta a la que pertenece el token.</p>
+</div>
+
+<div class="card">
+<h2>Tu aplicación</h2>
+<input id="fi" type="file" hidden="">
+<button class="b2" id="pick">Elegir archivo HTML</button>
+<div id="fn"></div>
+<label for="nm">Nombre del enlace</label>
+<input id="nm" type="text" autocapitalize="none" spellcheck="false" placeholder="ajedrez">
+<p class="hint" id="nh">Aparecerá en la dirección. Solo letras, números y guiones.</p>
+</div>
+
+<div class="card">
+<h2>Proceso</h2>
+<ul class="st" id="sl">
+<li><i></i>Comprobar tu cuenta</li><li><i></i>Crear el proyecto</li><li><i></i>Subir tu aplicación</li><li><i></i>Activar la página pública</li><li><i></i>Esperar a que esté en línea</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section class="pg2" id="p2">
+<div class="pt"><h1>Ayuda</h1>
+<div class="card">
+<details open=""><summary>Cómo obtener el token en GitHub</summary>
+<ol>
+<li>En Inicio pulsa <b>Editar y obtener token</b>. Se abre GitHub con el permiso repo ya preparado.</li>
+<li>Comprueba que la nota sea <code>coffeb</code>, la caducidad 7 días y que solo esté marcado <b>repo</b>.</li>
+<li>Pulsa <b>Generar token</b> y copia el texto <code>ghp_…</code>. Solo se muestra una vez.</li>
+</ol></details>
+<details><summary>Cómo obtener el token en Codeberg</summary>
+<ol>
+<li>Entra en <code>codeberg.org</code> → foto de perfil → <b>Settings</b> → <b>Applications</b>.</li>
+<li>Escribe un nombre. En <b>repository</b> elige <b>Read and Write</b> y en <b>user</b> elige <b>Read</b>.</li>
+<li>Pulsa <b>Generate Token</b> y copia el texto. Solo se muestra una vez.</li>
+</ol></details>
+<details><summary>Cómo cuido tu privacidad</summary>
+<ul>
+<li>El token vive solo en la memoria de esta pantalla. No se escribe en el dispositivo; lo único que se recuerda es tu elección de modo claro u oscuro.</li>
+<li>La app solo puede conectarse a <code>api.github.com</code> y <code>codeberg.org</code>, y a <code>codeberg.page</code> para comprobar tu página ya publicada (sin enviar tu token). El navegador bloquea cualquier otro destino.</li>
+<li>Tu archivo va directo a tu cuenta, sin servidores intermedios.</li>
+<li>El campo del token se vacía al terminar la publicación.</li>
+<li>El informe de incidencias no incluye el token ni tu archivo y solo se envía si pulsas «Enviar por correo».</li>
+<li>COFFEB-C solo entra en la cuenta a la que pertenece el token que tú pegas. No puede acceder a cuentas ajenas.</li>
+<li>El proyecto será público: no incluyas datos personales en tu aplicación.</li>
+<li>El token sigue activo en GitHub hasta que caduque. Bórralo cuando termines de probar.</li>
+</ul></details>
+<details><summary>Si algo falla</summary>
+<ul>
+<li><b>Token rechazado:</b> revisa que esté completo, vigente y con el permiso repo.</li>
+<li><b>Error 404 al abrir el enlace:</b> espera un par de minutos y recarga.</li>
+<li><b>Codeberg dice «Not Found»:</b> Codeberg publica el sitio al recibir un aviso (webhook) del proyecto. COFFEB-C lo configura solo; si lo creaste antes con una versión anterior, vuelve a publicar con el mismo nombre y acepta reemplazar.</li>
+<li><b>Sin conexión:</b> comprueba tu internet y vuelve a intentarlo.</li>
+</ul></details>
+</div>
+<div class="card"><h2>¿Algo no funciona?</h2><p class="hint">Genera un informe técnico (sin tu token ni tu archivo) para enviarlo por correo o copiarlo.</p><button class="b2" id="rep2" style="margin-top:10px">Reportar incidencia</button></div></div>
+</section>
+
+<section class="pg2 on" id="p3">
+<div class="pt"><h1>Acerca de</h1>
+<div class="card ab">
+<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 12h17v7a6 6 0 0 1-6 6h-5a6 6 0 0 1-6-6z" fill="#fff"></path><path d="M23 14h2a3 3 0 0 1 0 6h-2" stroke="#fff" stroke-width="2" fill="none"></path><path d="M11 8c0-2 2-2 2-4M16 8c0-2 2-2 2-4" stroke="#3ee6a8" stroke-width="2" stroke-linecap="round" fill="none"></path></svg>
+<h2>CAFÉ EXPRESS · Publicador</h2>
+<p>Versión 11.0</p>
+<p>Publica tu aplicación HTML en GitHub o Codeberg y obtén un enlace listo para compartir, sin tocar sus webs.</p>
+<p><b>SOLUCIONES COFFE</b></p>
+<p>Desarrollado por Fernando Juan</p>
+<p style="font-size:.82rem">Código generado con la colaboración de Claude (Anthropic)</p>
+<p>© 2026 Fernando Juan. Todos los derechos reservados.</p>
+<a class="b1" id="ct" style="margin-top:12px" href="mailto:luisfernandojuanchaple@gmail.com?subject=COFFEB-C%3A%20consulta">Contáctanos</a>
+<button class="b2" id="dlme" style="margin-top:10px">Descargar CAFÉ EXPRESS · Publicador</button>
+<p class="hint">Guarda esta misma app en tu dispositivo, tal como está ahora, para tenerla sin depender de este chat.</p>
+</div></div>
+</section>
+
+<div class="ft">© 2026 Fernando Juan · Todos los derechos reservados · SOLUCIONES COFFE</div>
+
+<div class="nav">
+<button class="" data-t="p1"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>Inicio</button>
+<button data-t="p2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"></path></svg>Ayuda</button>
+<button data-t="p3" class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg>Acerca de</button>
+</div>
+</div>
+
+<div id="ov2" role="dialog" aria-modal="true" aria-label="Reportar incidencia">
+<div class="sh">
+<button class="x" id="cl2" aria-label="Cerrar">✕</button>
+<h2>Reportar incidencia</h2>
+<p class="hint">El informe incluye datos técnicos del navegador y de los pasos que fallaron. No incluye tu token, tu archivo ni tu nombre de usuario.</p>
+<label for="rc">Tu comentario (opcional)</label>
+<textarea id="rc" placeholder="Cuéntanos qué pasó"></textarea>
+<label for="rt">Informe</label>
+<textarea id="rt" readonly="" style="min-height:190px"></textarea>
+<div class="two"><a class="b1" id="rm">Enviar por correo</a><button class="b2" id="rcp">Copiar texto</button></div>
+<div id="rmsg" class="hint"></div>
+<div class="sec">Al pulsar «Enviar por correo» se abre tu aplicación de correo con este informe ya escrito. Lo envías tú desde tu propia cuenta, así que quien lo reciba verá tu dirección. Si no tienes aplicación de correo, usa «Copiar texto».</div>
+</div>
+</div>
+
+<div id="ov" role="dialog" aria-modal="true" aria-label="Tu enlace">
+<div class="sh">
+<button class="x" id="cl" aria-label="Cerrar">✕</button>
+<h2>¡Tu enlace está listo!</h2>
+<span id="url"></span>
+<div class="two"><button class="b2" id="try">Probar</button><button class="b1" id="open">Abrir</button></div>
+<div id="msg"></div>
+<label for="st">Texto para tus redes</label>
+<textarea id="st"></textarea>
+<div class="two"><button class="b2" id="cp">Copiar</button><button class="b2" id="sh">Compartir</button></div>
+<div class="two"><a class="b2" id="fb" target="_blank" rel="noopener noreferrer">Facebook</a><a class="b2" id="wa" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>
+<div class="sec">Tu token ya se borró de esta pantalla, pero sigue activo en <span id="pn">GitHub</span> hasta que caduque. Cuando termines de probar, bórralo allí.<br><a id="tl" target="_blank" rel="noopener noreferrer" style="color:var(--sl);font-weight:700">Abrir lista de tokens</a></div>
+</div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),sleep=ms=>new Promise(r=>setTimeout(r,ms)),C=553;
+let plat='auto',file=null,busy=false,final='',finalPlat='gh',warnTxt='';
+let trace=[],lastErr=null,curStep='';
+const LB=[['Comprobar tu cuenta','Crear el proyecto','Subir tu aplicación','Activar la página pública','Esperar a que esté en línea'],['Comprobar tu cuenta','Crear el proyecto y la rama pública','Subir tu aplicación','Comprobar la rama pública','Esperar a que esté en línea']];
+
+/* pestañas */
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.pg2').forEach(p=>p.classList.toggle('on',p.id===b.dataset.t));
+  scrollTo(0,0);
+});
+const GH='https://github.com/settings/tokens',GHN='https://github.com/settings/tokens/new?scopes=repo&description=coffeb&default_expires_at=7',CB='https://codeberg.org/user/settings/applications';
+function detect(t){return /^(ghp_|github_pat_|gho_|ghu_|ghs_|ghr_)/.test(t)?'gh':/^[0-9a-f]{40}$/i.test(t)?'cb':null}
+const nm2=p=>p=='gh'?'GitHub':'Codeberg';
+function effPlat(){return plat!='auto'?plat:(detect($('#tok').value.trim())||'gh')}
+function updTokLinks(){
+  const t=$('#tok').value.trim(),dt=detect(t),gh=effPlat()=='gh';
+  $('#gtk').href=gh?GHN:CB;$('#ltk').href=gh?GH:CB;
+  const alt=$('#alt'),a=$('#ctk');
+  if(plat=='auto'){alt.style.display='inline';a.href=gh?CB:GHN;a.textContent=gh?'Token de Codeberg':'Token de GitHub'}else alt.style.display='none';
+  let m='';
+  if(plat=='auto')m=!t?'Automático: detecto GitHub o Codeberg según tu token.':dt?'Detectado: '+nm2(dt)+'.':'No reconozco este token. Elige GitHub o Codeberg arriba.';
+  else if(t&&dt&&dt!=plat)m='Este token parece de '+nm2(dt)+', no de '+nm2(plat)+'.';
+  $('#det').textContent=m;
+}
+document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{plat=b.dataset.p;document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));updTokLinks()});
+$('#eye').onclick=()=>{const t=$('#tok'),h=t.type=='password';t.type=h?'text':'password';$('#eye').textContent=h?'Ocultar':'Ver'};
+
+/* datos */
+function rn(n){return n.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'')}
+function chips(){
+  $('#c1').classList.toggle('ok',!!$('#tok').value.trim());
+  $('#c2').classList.toggle('ok',!!file);
+  $('#c3').classList.toggle('ok',!!rn($('#nm').value));
+  const r=rn($('#nm').value);
+  $('#nh').textContent=r?'Nombre en la dirección: '+r:'Aparecerá en la dirección. Solo letras, números y guiones.';
+}
+$('#tok').oninput=()=>{chips();updTokLinks()};$('#nm').oninput=chips;
+$('#pick').onclick=()=>$('#fi').click();
+$('#fi').onchange=e=>{
+  file=e.target.files[0]||null;
+  $('#fn').textContent=!file?'':(file.size===0?'⚠ '+file.name+' está vacío. Elige otro archivo.':'✓ '+file.name+(file.name.toLowerCase()==='index.html'?'':(/\.html?$/i.test(file.name)?' (se publicará como index.html)':' (no parece un archivo HTML; se publicará como index.html)')));
+  if(file&&file.size===0)file=null;
+  if(file&&!$('#nm').value)$('#nm').value=rn('cafe-express-'+file.name.replace(/\.html?$/i,''));
+  chips();
+};
+
+/* progreso */
+function prog(p,t,cls){
+  $('#rg').style.strokeDashoffset=C*(1-p/100);
+  $('#pc').textContent=Math.round(p)+'%';
+  $('#sx').textContent=t;$('#sx').className=cls||'';
+  $('#ring').classList.toggle('err',cls=='e');
+}
+function step(n){if(n>=0){const l=document.querySelectorAll('#sl li')[n];curStep=l?l.textContent:curStep}document.querySelectorAll('#sl li').forEach((li,i)=>li.className=i<n?'done':i==n?'run':'')}
+function allDone(){document.querySelectorAll('#sl li').forEach(li=>li.className='done')}
+
+/* API */
+const b64=f=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.onerror=()=>ko(r.error);r.readAsDataURL(f)});
+async function api(base,tok,gh,method,path,body){
+  const h={Accept:'application/json',Authorization:(gh?'Bearer ':'token ')+tok};
+  if(body)h['Content-Type']='application/json';
+  if(gh)h['X-GitHub-Api-Version']='2022-11-28';
+  const r=await fetch(base+path,{method,headers:h,body:body?JSON.stringify(body):undefined});
+  let d=null;try{d=await r.json()}catch(e){}
+  trace.push(method+' '+path.split('?')[0].replace(/^\/repos\/[^/]+\/[^/]+/,'/repos/{o}/{r}')+' → '+r.status);return{ok:r.ok,status:r.status,d};
+}
+const em=r=>(r.d&&r.d.message)?' '+r.d.message:'';
+const scopeHint=(r,gh)=>(r.status==403&&r.d&&/scope/i.test(r.d.message||''))?'Tu token no tiene permiso para escribir en tus repositorios. Créalo de nuevo con '+(gh?'la casilla «repo» marcada.':'repository en «Read and Write» y user en «Read».'):'';
+class Stop extends Error{}
+const fail=t=>{throw new Stop(t)};
+
+async function publish(){
+  if(busy)return;
+  let tok=$('#tok').value.trim();const name=rn($('#nm').value);
+  if(!tok||!file||!name){
+    const f=[!tok&&'el token',!file&&'el archivo',!name&&'el nombre'].filter(Boolean);
+    prog(0,'Falta: '+f.join(', ')+'.','e');return;
+  }
+  let P=plat;const dt=detect(tok);
+  if(P=='auto'){if(!dt){prog(0,'No reconozco este token. Elige GitHub o Codeberg arriba.','e');return}P=dt}
+  else if(dt&&dt!==P){prog(0,'Este token parece de '+nm2(dt)+', no de '+nm2(P)+'.','e');return}
+  const gh=P=='gh',base=gh?'https://api.github.com':'https://codeberg.org/api/v1';
+  trace=[];lastErr=null;curStep='';$('#rep').style.display='none';
+  busy=true;$('#main').disabled=true;$('#main').textContent='PUBLICANDO…';$('#ring').classList.add('spin');
+  document.querySelectorAll('#sl li').forEach((li,i)=>{li.lastChild.textContent=LB[gh?0:1][i]});
+  step(0);
+  try{
+    prog(5,'Comprobando tu cuenta…');
+    const u=await api(base,tok,gh,'GET','/user');
+    if(!u.ok)fail(u.status==401?'El token no es válido o caducó. Revisa que esté completo.':(!gh&&u.status==403)?'El token de Codeberg necesita también el permiso user en Read. Créalo de nuevo con repository y user.':'No se pudo validar la cuenta ('+u.status+').'+em(u));
+    const owner=u.d.login;
+    step(1);prog(15,'Creando el proyecto…');
+    let rp=await api(base,tok,gh,'POST','/user/repos',{name,description:'Aplicación publicada con COFFEB-C',private:false,auto_init:true});
+    if(!rp.ok){
+      if(rp.status==422||rp.status==409){
+        if(!confirm('Ya tienes un proyecto llamado «'+name+'». ¿Reemplazar su index.html con este archivo?'))fail('Cancelado. Cambia el nombre del enlace.');
+        rp=await api(base,tok,gh,'GET','/repos/'+owner+'/'+name);
+        if(!rp.ok)fail('No se pudo acceder al proyecto existente.'+em(rp));
+      }else fail(scopeHint(rp,gh)||'No se pudo crear el proyecto ('+rp.status+').'+em(rp));
+    }
+    const def=rp.d.default_branch||'main';let target=def,hookId=null;
+    if(!gh){
+      prog(28,'Preparando la rama pública…');
+      const br=await api(base,tok,gh,'POST','/repos/'+owner+'/'+name+'/branches',{new_branch_name:'pages',old_branch_name:def});
+      if(!(br.ok||br.status==409||br.status==422))fail(scopeHint(br,gh)||'No se pudo preparar la rama pública ('+br.status+').'+em(br));
+      target='pages';
+      prog(33,'Conectando con Codeberg Pages…');
+      const hookUrl='https://'+owner+'.codeberg.page/'+name+'/',hp='/repos/'+owner+'/'+name+'/hooks';
+      const hk=await api(base,tok,gh,'GET',hp);
+      const found=hk.ok&&Array.isArray(hk.d)?hk.d.find(h=>h.config&&h.config.url===hookUrl):null;
+      if(found)hookId=found.id;
+      else{
+        const mk=t=>({type:t,active:true,events:['push'],branch_filter:'pages',config:{url:hookUrl,content_type:'json',http_method:'post'}});
+        let hc=await api(base,tok,gh,'POST',hp,mk('forgejo'));
+        if(!hc.ok&&(hc.status==400||hc.status==422))hc=await api(base,tok,gh,'POST',hp,mk('gitea'));
+        if(!hc.ok)fail(scopeHint(hc,gh)||'No se pudo conectar el proyecto con Codeberg Pages ('+hc.status+').'+em(hc));
+        hookId=hc.d&&hc.d.id;
+      }
+    }
+    step(2);prog(40,'Subiendo tu aplicación…');
+    const cont=await b64(file),path='/repos/'+owner+'/'+name+'/contents/index.html';
+    const ex=await api(base,tok,gh,'GET',path+'?ref='+encodeURIComponent(target));
+    const body={message:'Publicado con COFFEB-C',content:cont,branch:target};
+    if(ex.ok&&ex.d&&ex.d.sha)body.sha=ex.d.sha;
+    const same=ex.ok&&ex.d&&typeof ex.d.content=='string'&&ex.d.content.replace(/\s/g,'')===cont;
+    if(!same){
+      const up=await api(base,tok,gh,(gh||body.sha)?'PUT':'POST',path,body);
+      if(!up.ok)fail(scopeHint(up,gh)||'No se pudo subir el archivo ('+up.status+').'+em(up));
+    }
+    let url,warn='';
+    if(gh){
+      step(3);prog(65,'Activando la página pública…');
+      const pg=await api(base,tok,gh,'POST','/repos/'+owner+'/'+name+'/pages',{source:{branch:target,path:'/'}});
+      if(!(pg.ok||pg.status==409))warn='No se pudo activar la página automáticamente. Actívala en Settings → Pages del proyecto.';
+      url='https://'+owner+'.github.io/'+name+'/';
+      step(4);prog(75,'Esperando a que GitHub la ponga en línea…');
+      let built=false;
+      for(let i=0;i<36&&!built;i++){
+        const b=await api(base,tok,gh,'GET','/repos/'+owner+'/'+name+'/pages/builds/latest');
+        if(b.ok&&b.d&&b.d.status=='built')built=true;
+        else if(b.ok&&b.d&&b.d.status=='errored'){warn='GitHub informó un error al construir la página. Revisa que el archivo sea HTML válido.';break}
+        else{prog(75+Math.min(i,22),'Esperando a que GitHub la ponga en línea…');await sleep(5000)}
+      }
+      if(!built&&!warn)warn='GitHub aún prepara la página. Si al abrirla ves un error, espera un par de minutos y recarga.';
+    }else{
+      step(3);prog(78,'Comprobando la rama pública…');
+      if(hookId)await api(base,tok,gh,'POST','/repos/'+owner+'/'+name+'/hooks/'+hookId+'/tests?ref=refs/heads/pages');
+      const vr=await api(base,tok,gh,'GET',path+'?ref=pages');
+      if(!vr.ok)fail('No pude confirmar el archivo en la rama pública ('+vr.status+').'+em(vr));
+      url='https://'+owner+'.codeberg.page/'+name+'/';
+      step(4);prog(82,'Esperando a que Codeberg la ponga en línea…');
+      let live=false;
+      for(let i=0;i<18&&!live;i++){
+        try{const r=await fetch(url+'?c='+Date.now(),{cache:'no-store'});if(r.ok)live=true}catch(e){}
+        if(!live){prog(82+Math.min(i,16),'Esperando a que Codeberg la ponga en línea…');await sleep(5000)}
+      }
+      if(!live)warn='No pude confirmar que Codeberg ya la haya puesto en línea. Suele tardar uno o dos minutos tras recibir el aviso: usa Probar y, si ves «Not Found», espera y recarga.';
+    }
+    allDone();prog(100,warn?'Terminado, con un aviso. Pulsa Obtener enlace.':'¡Publicado! Pulsa Obtener enlace.');
+    $('#ring').classList.remove('spin');
+    final=url;finalPlat=P;warnTxt=warn;
+    $('#tok').value='';tok=null;chips();
+    const m=$('#main');m.disabled=false;m.textContent='OBTENER ENLACE';m.dataset.m='link';$('#again').style.display='block';
+  }catch(e){
+    $('#ring').classList.remove('spin');step(-1);lastErr=e instanceof Stop?e.message:(e instanceof TypeError?'Sin conexión con el servicio.':'Error inesperado: '+e.message);if(e instanceof TypeError)trace.push('(sin respuesta de red)');$('#rep').style.display='block';
+    prog(0,e instanceof Stop?e.message:(e instanceof TypeError?'Sin conexión con el servicio. Revisa tu internet y vuelve a intentarlo.':'Error inesperado: '+e.message),'e');
+    $('#main').disabled=false;$('#main').textContent='PUBLICAR';
+  }finally{busy=false}
+}
+
+function openSheet(){
+  const nm=rn($('#nm').value),gh=finalPlat=='gh';
+  $('#url').textContent=final;
+  $('#msg').textContent=warnTxt||'Si al abrirla ves un error, espera un par de minutos y recarga.';
+  const t='Mira mi aplicación «'+nm+'»: '+final;
+  $('#st').value=t;
+  $('#fb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(final);
+  $('#wa').href='https://wa.me/?text='+encodeURIComponent(t);
+  $('#pn').textContent=gh?'GitHub':'Codeberg';
+  $('#tl').href=gh?'https://github.com/settings/tokens':'https://codeberg.org/user/settings/applications';
+  $('#ov').classList.add('on');
+}
+$('#main').onclick=()=>{if($('#main').dataset.m=='link')openSheet();else publish()};
+$('#again').onclick=()=>{
+  final='';$('#main').dataset.m='';$('#main').textContent='PUBLICAR';$('#again').style.display='none';
+  file=null;$('#fi').value='';$('#fn').textContent='';$('#nm').value='';chips();step(-1);prog(0,'Completa los tres datos y pulsa Publicar.');
+};
+$('#cl').onclick=()=>$('#ov').classList.remove('on');
+$('#ov').onclick=e=>{if(e.target.id=='ov')$('#ov').classList.remove('on')};
+$('#open').onclick=()=>window.open(final,'_blank','noopener,noreferrer');
+$('#try').onclick=()=>{window.open(final+'?prueba='+Date.now(),'_blank','noopener,noreferrer');$('#msg').textContent='Se abrió una copia de prueba. Si ves un error 404, la página aún se activa: espera y vuelve a probar.'};
+$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(final);$('#msg').textContent='Enlace copiado.'}catch(e){$('#msg').textContent='No se pudo copiar. Selecciona el enlace y cópialo.'}};
+$('#sh').onclick=async()=>{if(navigator.share){try{await navigator.share({text:$('#st').value})}catch(e){}}else{try{await navigator.clipboard.writeText($('#st').value);$('#msg').textContent='Texto copiado.'}catch(e){$('#msg').textContent='Copia el texto manualmente.'}}};
+$('#ct').href='mailto:'+['luisfernandojuanchaple','gmail.com'].join('@')+'?subject='+encodeURIComponent('COFFEB-C: consulta');
+function setTheme(t){document.documentElement.dataset.theme=t;$('meta[name=theme-color]').content=t=='dark'?'#000000':'#0a2463';try{localStorage.setItem('coffeb_tema',t)}catch(e){}}
+$('#th').onclick=()=>setTheme(document.documentElement.dataset.theme=='dark'?'light':'dark');
+try{if(localStorage.getItem('coffeb_tema')=='dark')setTheme('dark')}catch(e){}
+const VER='11.0',MAIL=['luisfernandojuanchaple','gmail.com'].join('@');
+function infoRep(){
+  const dt=detect($('#tok').value.trim());
+  const pl=plat=='auto'?('Automático'+(dt?' → '+nm2(dt):' (token vacío o no reconocido)')):nm2(plat);
+  const L=['COFFEB-C v'+VER+' · informe de incidencia','Fecha: '+new Date().toLocaleString('es'),'Plataforma: '+pl,'Paso: '+(curStep||'(ninguno todavía)'),'Resultado: '+(lastErr||'(sin error registrado)'),'Pasos de red:'];
+  if(trace.length)trace.forEach(t=>L.push('  '+t));else L.push('  (ninguno)');
+  L.push('Tema: '+(document.documentElement.dataset.theme||'light'),'Navegador: '+navigator.userAgent);
+  const c=$('#rc').value.trim();if(c)L.push('','Comentario del usuario: '+c);
+  return L.join('\n');
+}
+function refRep(){
+  const t=infoRep();$('#rt').value=t;
+  $('#rm').href='mailto:'+MAIL+'?subject='+encodeURIComponent('COFFEB-C v'+VER+': incidencia')+'&body='+encodeURIComponent(t);
+}
+function openRep(){refRep();$('#rmsg').textContent='';$('#ov2').classList.add('on')}
+$('#rep').onclick=openRep;$('#rep2').onclick=openRep;$('#rc').oninput=refRep;
+$('#cl2').onclick=()=>$('#ov2').classList.remove('on');
+$('#ov2').onclick=e=>{if(e.target.id=='ov2')$('#ov2').classList.remove('on')};
+$('#rcp').onclick=async()=>{
+  const t=$('#rt');let ok=false;
+  try{await navigator.clipboard.writeText(t.value);ok=true}catch(e){try{t.focus();t.select();ok=document.execCommand('copy')}catch(e2){}}
+  $('#rmsg').textContent=ok?'Copiado. Pégalo donde lo necesites.':'No pude copiar solo: mantén pulsado dentro del cuadro y elige Copiar.';
+};
+$('#dlme').onclick=()=>{
+  const html='<!doctype html>\n'+document.documentElement.outerHTML;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download='CAFE-EXPRESS-Publicador-v'+VER+'.html';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+};
+chips();updTokLinks();
+</script>
+
+
+</body></html>
